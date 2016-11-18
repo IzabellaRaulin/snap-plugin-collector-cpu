@@ -48,7 +48,7 @@ const (
 	pluginName = "cpu"
 
 	// version of cpu plugin
-	version = 6
+	version = 3
 
 	//pluginType type of plugin
 	pluginType = plugin.CollectorPluginType
@@ -174,6 +174,15 @@ func (p *Plugin) GetMetricTypes(cfg plugin.ConfigType) ([]plugin.MetricType, err
 		}
 	}
 
+	// to remove it, to show plugins swapping
+	mockMetricType := plugin.MetricType{
+		Namespace_: core.NewNamespace(strings.Split(prefix, string(os.PathSeparator))...).
+			AddStaticElement("mock").
+			AddStaticElement("version_info"),
+	}
+
+	metricTypes = append(metricTypes, mockMetricType)
+
 	return metricTypes, nil
 }
 
@@ -193,6 +202,18 @@ func (p *Plugin) CollectMetrics(metricTypes []plugin.MetricType) ([]plugin.Metri
 	ts := time.Now()
 	for _, metricType := range metricTypes {
 		ns := metricType.Namespace()
+		// todo remove it, to show plugins swapping purpose
+		if ns.String() == "/intel/procfs/cpu/mock/version_info" {
+			metric := plugin.MetricType{
+				Namespace_: ns,
+				Data_:      version,
+				Timestamp_: ts,
+				Version_:   version,
+			}
+			metrics = append(metrics, metric)
+			continue
+		}
+
 		if len(ns) != maxNamespaceSize {
 			return nil, fmt.Errorf("Incorrect namespace length (len = %d)", len(ns))
 		}
