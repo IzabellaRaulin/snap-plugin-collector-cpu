@@ -48,7 +48,7 @@ const (
 	pluginName = "cpu"
 
 	// version of cpu plugin
-	version = 2
+	version = 1
 
 	//pluginType type of plugin
 	pluginType = plugin.CollectorPluginType
@@ -83,11 +83,14 @@ const (
 	//guestNiceProcStat "guest_nice" metric from /proc/stat
 	guestNiceProcStat = "guest_nice"
 
+	// to uncomment, for demo purpose
+	/*
 	//activeProcStat "active" snap metric
 	activeProcStat = "active"
 
 	//utilizationProcStat "utilization" snap metric
 	utilizationProcStat = "utilization"
+ 	*/
 
 	//jiffiesRepresentationType jiffies representation type
 	jiffiesRepresentationType = "jiffies"
@@ -292,12 +295,16 @@ func (p *Plugin) init(cfg map[string]ctypes.ConfigValue) error {
 	//initialize metric names arrays
 	p.procStatMetricsNames = []string{userProcStat, niceProcStat, systemProcStat, idleProcStat,
 		iowaitProcStat, irqProcStat, softirqProcStat, stealProcStat, guestProcStat, guestNiceProcStat}[0:procStatMetricsNumber]
-	snapSpecificMetricsNames := []string{activeProcStat, utilizationProcStat}
+
+	// commented out for DEMO purpose
+	// snapSpecificMetricsNames := []string{activeProcStat, utilizationProcStat}
 
 	//build snapMetricsNames to support different kernels
 	//var snapMetricsNames []string
 	p.snapMetricsNames = append(p.snapMetricsNames, p.procStatMetricsNames...)
-	p.snapMetricsNames = append(p.snapMetricsNames, snapSpecificMetricsNames...)
+
+	// commented out for DEMO purpose
+	// p.snapMetricsNames = append(p.snapMetricsNames, snapSpecificMetricsNames...)
 	p.stats = make(map[string]map[string]interface{})
 	p.prevMetricsSum = make(map[string]float64)
 	p.initialized = true
@@ -367,6 +374,8 @@ func getStats(path string, stats map[string]map[string]interface{}, prevMetricsS
 
 			metricName := snapMetricsNames[j]
 			var currVal float64
+
+			/* commented out for DEMO
 			//data collecting, there is an assumption that firstly metrics from /proc/stat/
 			//are gathered then snap specific metrics (e.g. active and utilization are calculated)
 			if metricName == activeProcStat {
@@ -398,6 +407,14 @@ func getStats(path string, stats map[string]map[string]interface{}, prevMetricsS
 					return err
 				}
 			}
+			*/
+
+			//todo remove it, after uncomment code above
+			currVal, err = strconv.ParseFloat(metrics[j], 64)
+			if err != nil {
+				return err
+			}
+
 
 			metricStats[getNamespaceMetricPart(metricName, percentageRepresentationType)] = nil
 
