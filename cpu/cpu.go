@@ -48,7 +48,7 @@ const (
 	pluginName = "cpu"
 
 	// version of cpu plugin
-	version = 3
+	version = 2
 
 	//pluginType type of plugin
 	pluginType = plugin.CollectorPluginType
@@ -99,7 +99,7 @@ const (
 	maxNamespaceSize = 5
 
 	//allCPU string indentifier for aggregation metrics (for all CPUs)
-	allCPU = "all"
+	//allCPU = "all"
 
 	//cpuStr string indentifier for /proc/stat line which have desired CPU metrics
 	cpuStr = "cpu"
@@ -343,7 +343,9 @@ func getStats(path string, stats map[string]map[string]interface{}, prevMetricsS
 			if err != nil {
 				return err
 			}
-			cpuID = allCPU //change CPU identifier for aggregation metrics
+			//todo change it, demo purpose
+			continue
+			//cpuID = allCPU //change CPU identifier for aggregation metrics
 		} else {
 			cpuID = strings.TrimPrefix(cpuID, cpuStr) //get number from CPU indentifier, for example if CPU identifier is cpu42 then 42 is get
 		}
